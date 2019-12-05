@@ -1,0 +1,56 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background: darkcyan;
+}
+fieldset {
+    width: max-content;
+}
+
+#form {
+    display: flex;
+    flex-flow: column;
+    width: max-content;
+}
+#form input {
+    margin: 6px ;
+}
+#submit {
+    padding: 5px;
+}
+table * {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px;
+}
+
+/* Header */
+header {
+    margin: 0;
+    padding: 0;
+    background: burlywood;
+}
+#navigation {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.1em;
+    margin: 0;
+    padding: 20px;
+}
+#navigation a:hover {
+    color: brown;
+}
+/* Admin */
+#velkomin {
+    margin: 10px;
+}
+textarea {
+    border: 3px solid burlywood;
+}
+#nyttpost {
+    margin: 10px;
+}

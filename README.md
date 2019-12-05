@@ -1,2 +1,2 @@
-# lokaverkefni-vef-
-Lokaverkefni VEFÞ2VF05CU
+# verk-5
+Verkefni 5 eftir Jón Bjarka
