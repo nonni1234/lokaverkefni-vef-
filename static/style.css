@@ -54,3 +54,11 @@ textarea {
 #nyttpost {
     margin: 10px;
 }
+.alterform { /* Notað til að breyta eða eyða posts */
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+.alterform button {
+    font-size: 0.8em;
+}

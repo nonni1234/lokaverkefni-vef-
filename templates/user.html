@@ -1,0 +1,36 @@
+{% extends "default.html" %}
+{% block title %}Admin Síða{% endblock %}
+
+{% block content %}
+
+<h2 id="velkomin">Velkomin/nn {{ nafn }}</h2>
+<div id="nyttpost">
+<form action="/nyttpost" method="POST",id="nyttpost">
+    <h3>Nýtt Post:</h3><br>
+    <input type="hidden" value="{{ nafn }}"name="userID">
+    <textarea rows="8" type="text" name="post" accept-charset="UTF-8"></textarea>
+    <br>
+    <button type="submit">Klára Post</button>
+</form>
+</div>
+
+<div id="yourposts">
+    <table>
+        <tr><td>Þín Posts</td>
+        <td>Dagsetning</td>
+        <td></td>
+        <td></td>
+    </tr>
+    {% for i in posts %}
+        <tr><td>{{ i["post"] }}</td>
+        <td>{{ i["dagsetning"] }}</td>
+        <td><form method="POST" class="alterform" action="/breyta"><button type="submit">Breyta</button><input type="hidden" value="{{i['postID']}}" name="id"></form></td>
+        <td><form method="POST" class="alterform" action="/eyda"><button type="submit">Eyda</button><input type="hidden" value="{{i['postID']}}"name="id"></form></td>
+        </tr>
+        {% endfor %}
+</table>
+</div>
+
+<a href="/signout"> <button>Sign Out</button> </a>
+
+{% endblock %}

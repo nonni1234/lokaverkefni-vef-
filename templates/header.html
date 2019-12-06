@@ -1,10 +1,12 @@
 <header>
 <nav id="navigation">
     <a href="/">Heim</a>
+    {% if not session.get("logged_in") %}
     <a href="/login">Login</a>
     <a href="/signup">Sign Up</a>
+    {% endif %}
     {% if session.get("logged_in") %}
-    <a href="/admin">Þín Posts</a>
+    <a href="/user">Þín Posts</a>
     {% endif %}
 </nav>
 </header>

@@ -3,4 +3,21 @@
 
 {% block content %}
 
+<div id="posts">
+    <table id="posts-table">
+        <tr>
+            <td>Post</td>
+            <td>Höfundur</td>
+            <td>Dagsetning</td>
+        </tr>
+        {% for post in posts %}
+        <tr>
+            <td>{{ post["post"] }}</td>
+            <td>{{ post["nafn"] }}</td>
+            <td>{{ post["dagsetning"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
 {% endblock %}
