@@ -2,7 +2,7 @@
 {% block title %}Breyta Post{% endblock %}
 
 {% block content %}
-<form action="/breytasubmit">
+<form action="/breytasubmit" method="POST">
 <textarea name="breyttpost" id="breyttpost" cols="30" rows="10">{{ post }}</textarea>
 <button type="submit">Klára</button>
 <input type="hidden" name="postid" value="{{ postid }}">

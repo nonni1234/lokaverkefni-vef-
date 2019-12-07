@@ -18,14 +18,20 @@
     <table>
         <tr><td>Þín Posts</td>
         <td>Dagsetning</td>
-        <td></td>
-        <td></td>
+        <td style="border: none"></td>
+        <td style="border: none"></td>
     </tr>
     {% for i in posts %}
         <tr><td>{{ i["post"] }}</td>
         <td>{{ i["dagsetning"] }}</td>
-        <td><form method="POST" class="alterform" action="/breyta"><button type="submit">Breyta</button><input type="hidden" value="{{i['postID']}}" name="id"></form></td>
-        <td><form method="POST" class="alterform" action="/eyda"><button type="submit">Eyda</button><input type="hidden" value="{{i['postID']}}"name="id"></form></td>
+        <td class="alterform"><form method="POST" class="alterform" action="/breyta">
+            <input type="hidden" value="{{i['postID']}}" name="postid">
+            <button type="submit">Breyta</button>
+            </form></td>
+        <td class="alterform"><form method="POST" class="alterform" action="/eyda">
+            <button type="submit">Eyda</button>
+            <input type="hidden" value="{{i['postID']}}"name="postid">
+            </form></td>
         </tr>
         {% endfor %}
 </table>

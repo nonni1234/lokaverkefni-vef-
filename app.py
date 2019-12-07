@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16)
 print(app.secret_key)
 # Sql stuff
-try:
+try: # þetta checkar á byrjunni á forritinu og leyfir það ekki að runna ef database tenging er ekki available
     connection = pymysql.connect(
         host='tsuts.tskoli.is',
         user='1809022520',
@@ -22,10 +22,10 @@ try:
         print(result)
     connection.close()
 except pymysql.OperationalError:
-    print("Connection Failed")
+    print("Connection Failed (Checkaðu hvort þú ert á tækniskóla wifi-inu)")
     quit()
 @app.route("/")
-def home():
+def home(): # Index síðan
     sql = "SELECT * FROM posts"
     args = []
     connection = pymysql.connect(
@@ -50,7 +50,7 @@ def home():
     return template("index.html",posts = args)
 
 @app.route("/user",methods=["GET"])
-def user():
+def user(): # Heimasíða Users
     if not session.get("logged_in"):
         return redirect("/")
     else:
@@ -73,34 +73,54 @@ def user():
         return template("user.html", posts=results, nafn=nafn)
 
 @app.route("/nyttpost", methods=["POST","GET"])
-def nytt():
-    post = request.form.get("post")
-    nafn = request.form.get("nafn")
-    time = datetime.now()
-    dags = time.strftime("%Y-%m-%d %H:%M:%S")
-    dags = str(dags)
-    print(dags)
-    sql = f"INSERT INTO posts(nafn,post,dagsetning) values('{nafn}','{post}','{dags}')"
-    connection = pymysql.connect(
-        host='tsuts.tskoli.is',
-        user='1809022520',
-        password='mypassword',
-        db='1809022520_verk7',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor
-        )
-    with connection.cursor() as cursor:
-        cursor.execute(sql)
-        connection.commit()
-    connection.close()
-    return template("done.html",msg="Post hefur verið bætt við")
+def nytt(): # Bæta við post
+    if session.get("logged_in"):
+        post = request.form.get("post")
+        nafn = session["nafn"]
+        time = datetime.now()
+        dags = time.strftime("%Y-%m-%d %H:%M:%S")
+        dags = str(dags)
+        print(dags)
+        sql = f"INSERT INTO posts(nafn,post,dagsetning) values('{nafn}','{post}','{dags}')"
+        connection = pymysql.connect(
+            host='tsuts.tskoli.is',
+            user='1809022520',
+            password='mypassword',
+            db='1809022520_verk7',
+            charset='utf8',
+            cursorclass=pymysql.cursors.DictCursor
+            )
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            connection.commit()
+        connection.close()
+        return template("done.html",msg="Post hefur verið bætt við")
+    else:
+        return redirect("/")
 
 @app.route("/eyda", methods=["POST","GET"])
-def eyda():
-    pass
-
+def eyda(): # Eyda Post
+    id = request.form.get("postid")
+    if session.get("logged_in"):
+        name = session["nafn"]
+        sql = f"DELETE FROM posts WHERE postID = {id} AND nafn = '{name}'"
+        connection = pymysql.connect(
+                host='tsuts.tskoli.is',
+                user='1809022520',
+                password='mypassword',
+                db='1809022520_verk7',
+                charset='utf8',
+                cursorclass=pymysql.cursors.DictCursor
+                )
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            connection.commit()
+            connection.close()
+        return redirect(url_for("user"))
+    else:
+        return redirect("/")
 @app.route("/breyta", methods=["POST","GET"])
-def breyta():
+def breyta(): # Breyta Post
     if request.method == "POST" and session.get("logged_in"):
         connection = pymysql.connect(
         host='tsuts.tskoli.is',
@@ -110,7 +130,7 @@ def breyta():
         charset='utf8',
         cursorclass=pymysql.cursors.DictCursor
         )
-        postid = request.form.get("postid")
+        postid = request.form["postid"]
         print(postid)
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT post FROM posts WHERE postID = {postid}")
@@ -121,23 +141,27 @@ def breyta():
     else:
         return redirect("/")
 @app.route("/breytasubmit",methods=["POST","GET"])
-def breytasubmit():
-    breyttpost = request.form.get("breyttpost")
-    postid = request.form.get("id")
-    nafn = session.get("nafn")
-    connection = pymysql.connect(
-        host='tsuts.tskoli.is',
-        user='1809022520',
-        password='mypassword',
-        db='1809022520_verk7',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor
-        )
-    with connection.cursor() as cursor:
-        sql = f"UPDATE posts SET post='{breyttpost}' WHERE postID={postid} AND nafn='{nafn}'"
-        cursor.execute(sql)
-        connection.commit()
-        connection.close()
+def breytasubmit(): # Submit Routeið fyrir Breyta síðuna
+    if session.get("logged_in"):
+        breyttpost = request.form.get("breyttpost")
+        postid = request.form.get("postid")
+        nafn = session["nafn"]
+        connection = pymysql.connect(
+            host='tsuts.tskoli.is',
+            user='1809022520',
+            password='mypassword',
+            db='1809022520_verk7',
+            charset='utf8',
+            cursorclass=pymysql.cursors.DictCursor
+            )
+        with connection.cursor() as cursor:
+            sql = f"UPDATE posts SET post='{breyttpost}' WHERE postID={postid} AND nafn='{nafn}'"
+            cursor.execute(sql)
+            connection.commit()
+            connection.close()
+        return template("done.html",msg="Post hefur verið breytt")
+    else:
+        return redirect("/")
 
 @app.route("/login", methods=["GET","POST"])
 def loginsite():
@@ -193,7 +217,6 @@ def signup():
                 return template("done.html",msg="Þetta email/username er núþegar skráð!")
             finally:
                 connection.close()
-        session["logged_in"] = True
         return template("done.html",msg="Þú hefur verið registered! Vinsamlegast skráðu þig inn")
     else:
         return template("signup.html")
